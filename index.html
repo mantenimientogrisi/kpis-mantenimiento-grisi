@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#07182e">
+  <title>KPIs de Mantenimiento | Grupo Grisi</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" aria-label="Navegación principal">
+      <div class="brand">
+        <img src="assets/grisi-logo.png" alt="Grupo Grisi">
+        <div><strong>Mantenimiento</strong><span>Centro de indicadores</span></div>
+      </div>
+      <nav>
+        <button class="nav-item active" data-section="overview"><span>◫</span>Resumen ejecutivo</button>
+        <button class="nav-item" data-section="plants"><span>⌁</span>Desempeño por planta</button>
+        <button class="nav-item" data-section="equipment"><span>⚙</span>Equipos críticos</button>
+      </nav>
+      <div class="sidebar-note">
+        <span class="pulse"></span>
+        <div><strong>Corte de información</strong><small>Agosto 2026</small></div>
+      </div>
+    </aside>
+
+    <main>
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">SUBDIRECCIÓN DE MANUFACTURA</p>
+          <h1>KPIs de mantenimiento</h1>
+          <p class="subtitle" id="viewSubtitle">Visión consolidada de las plantas</p>
+        </div>
+        <div class="top-actions">
+          <label class="plant-select">
+            <span>Planta</span>
+            <select id="plantSelect" aria-label="Seleccionar planta">
+              <option value="ALL">Todas las plantas</option>
+              <option value="VALLEJO">Vallejo</option>
+              <option value="CDT">CDT</option>
+              <option value="CPA">CPA</option>
+              <option value="CPH">CPH</option>
+            </select>
+          </label>
+          <button id="exportButton" class="export-button">Descargar resumen</button>
+        </div>
+      </header>
+
+      <section class="filter-strip" aria-label="Filtros rápidos">
+        <div class="period"><span>Periodo</span><strong>Agosto 2026</strong></div>
+        <div class="plant-chips" id="plantChips"></div>
+        <div class="updated">Actualizado: 28 sep 2026</div>
+      </section>
+
+      <section class="notice" id="notice" hidden></section>
+
+      <section class="kpi-grid" aria-label="Indicadores principales">
+        <article class="kpi-card" id="tmCard">
+          <div class="kpi-heading"><span>Tiempo muerto</span><span class="status" id="tmStatus"></span></div>
+          <div class="kpi-value" id="tmValue">2.40%</div>
+          <div class="kpi-meta"><span>Meta general ≤ 1.50%</span><strong id="tmVariance">+0.90 pp</strong></div>
+          <div class="progress"><i id="tmProgress"></i></div>
+        </article>
+        <article class="kpi-card" id="mpCard">
+          <div class="kpi-heading"><span>Cumplimiento MP</span><span class="status" id="mpStatus"></span></div>
+          <div class="kpi-value" id="mpValue">98.00%</div>
+          <div class="kpi-meta"><span>Meta general ≥ 98%</span><strong id="mpVariance">En meta</strong></div>
+          <div class="progress"><i id="mpProgress"></i></div>
+        </article>
+        <article class="kpi-card">
+          <div class="kpi-heading"><span>Horas de paro</span><span class="icon-box">h</span></div>
+          <div class="kpi-value" id="hoursValue">829.45</div>
+          <div class="kpi-meta"><span id="hoursContext">Acumulado de 4 plantas</span><strong id="hoursShare">100%</strong></div>
+          <div class="mini-bars" id="miniBars" aria-hidden="true"></div>
+        </article>
+        <article class="kpi-card accent-card">
+          <div class="kpi-heading"><span>Foco de atención</span><span class="alert-dot">!</span></div>
+          <div class="focus-value" id="focusValue">CPA</div>
+          <p id="focusText">Concentra 58.4% de las horas de paro y excede la meta de tiempo muerto.</p>
+        </article>
+      </section>
+
+      <section class="dashboard-grid">
+        <article class="panel trend-panel">
+          <div class="panel-heading">
+            <div><p class="eyebrow">TENDENCIA GLOBAL</p><h2>Indicadores enero–agosto 2026</h2></div>
+            <div class="legend"><span><i class="blue"></i>Tiempo muerto</span><span><i class="green"></i>MP</span><span><i class="dashed"></i>Meta</span></div>
+          </div>
+          <div class="trend-chart" id="trendChart"></div>
+          <p class="chart-footnote">El eje izquierdo muestra tiempo muerto. El eje derecho muestra cumplimiento de mantenimiento preventivo.</p>
+        </article>
+
+        <article class="panel ranking-panel">
+          <div class="panel-heading">
+            <div><p class="eyebrow">COMPARATIVO</p><h2>Horas de paro por planta</h2></div>
+            <span class="total-pill" id="totalHours">829.45 h</span>
+          </div>
+          <div id="plantRanking" class="ranking"></div>
+        </article>
+
+        <article class="panel table-panel">
+          <div class="panel-heading">
+            <div><p class="eyebrow">CONTROL DE METAS</p><h2>Resultado por planta</h2></div>
+            <span class="hint">Seleccione una fila para consultar</span>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Planta</th><th>Tiempo muerto</th><th>Meta TM</th><th>MP</th><th>Horas</th><th>Estado</th></tr></thead>
+              <tbody id="plantTable"></tbody>
+            </table>
+          </div>
+        </article>
+
+        <article class="panel equipment-panel">
+          <div class="panel-heading">
+            <div><p class="eyebrow">DISTRIBUCIÓN</p><h2 id="equipmentTitle">Equipos con mayor tiempo muerto</h2></div>
+            <span class="hint" id="equipmentHint">Todas las plantas</span>
+          </div>
+          <div id="equipmentChart" class="equipment-chart"></div>
+        </article>
+      </section>
+
+      <footer><span>Grupo Grisi · Mantenimiento y Proyectos</span><span>Fuente: Indicadores de mantenimiento.pptx</span></footer>
+    </main>
+  </div>
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
