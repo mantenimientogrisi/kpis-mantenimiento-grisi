@@ -1,130 +1,51 @@
 <!doctype html>
 <html lang="es">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#07182e">
-  <title>KPIs de Mantenimiento | Grupo Grisi</title>
-  <link rel="stylesheet" href="styles.css">
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#f3f7fb">
+  <title>KPIs de mantenimiento | Grupo Grisi</title><link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <div class="app-shell">
-    <aside class="sidebar" aria-label="Navegación principal">
-      <div class="brand">
-        <img src="assets/grisi-logo.png" alt="Grupo Grisi">
-        <div><strong>Mantenimiento</strong><span>Centro de indicadores</span></div>
-      </div>
-      <nav>
-        <button class="nav-item active" data-section="overview"><span>◫</span>Resumen ejecutivo</button>
-        <button class="nav-item" data-section="plants"><span>⌁</span>Desempeño por planta</button>
-        <button class="nav-item" data-section="equipment"><span>⚙</span>Equipos críticos</button>
-      </nav>
-      <div class="sidebar-note">
-        <span class="pulse"></span>
-        <div><strong>Corte de información</strong><small>Agosto 2026</small></div>
-      </div>
-    </aside>
+<main class="page">
+  <header class="topbar">
+    <div><p class="eyebrow">SUBDIRECCIÓN DE MANUFACTURA</p><h1>KPIs de mantenimiento</h1><p id="viewSubtitle">Visión consolidada de las plantas</p></div>
+    <div class="actions">
+      <label>PLANTA<select id="plantSelect"><option value="ALL">Todas las plantas</option><option value="CPV">Vallejo</option><option value="CDT">CDT</option><option value="CPA">CPA</option><option value="CPH">CPH</option></select></label>
+      <button id="captureButton" class="secondary">✎ Captura mensual</button><button id="exportSummary">Descargar resumen</button>
+    </div>
+  </header>
+  <section class="filterbar"><div>Periodo&nbsp;&nbsp;<strong id="periodLabel"></strong></div><div id="plantChips" class="chips"></div><small id="updatedLabel"></small></section>
+  <section id="notice" class="notice" hidden></section>
+  <section class="kpis">
+    <article class="card kpi"><div class="kpi-head"><span>TIEMPO MUERTO</span><b id="tmStatus"></b></div><strong id="tmValue" class="big"></strong><div class="kpi-meta"><span id="tmGoalText"></span><b id="tmVariance"></b></div><div class="progress"><i id="tmProgress"></i></div></article>
+    <article class="card kpi"><div class="kpi-head"><span>CUMPLIMIENTO MP</span><b id="mpStatus"></b></div><strong id="mpValue" class="big"></strong><div class="kpi-meta"><span>Meta general ≥ 98%</span><b id="mpVariance"></b></div><div class="progress"><i id="mpProgress"></i></div></article>
+    <article class="card kpi"><div class="kpi-head"><span>HORAS DE PARO</span><b class="unit">h</b></div><strong id="hoursValue" class="big"></strong><div class="kpi-meta"><span id="hoursContext"></span><b id="hoursShare"></b></div><div id="miniBars" class="mini-bars"></div></article>
+    <article class="card focus"><div class="kpi-head"><span>FOCO DE ATENCIÓN</span><b>!</b></div><strong id="focusValue"></strong><p id="focusText"></p></article>
+  </section>
+  <section class="dash-grid">
+    <article class="card panel trend"><div class="panel-head"><div><p class="eyebrow">TENDENCIA GLOBAL</p><h2 id="trendTitle"></h2></div><div class="legend"><span class="tm">Tiempo muerto</span><span class="mp">MP</span><span class="goal">Meta</span></div></div><div id="trendChart"></div><small>El eje izquierdo muestra tiempo muerto. El eje derecho muestra cumplimiento de mantenimiento preventivo.</small></article>
+    <article class="card panel"><div class="panel-head"><div><p class="eyebrow">COMPARATIVO</p><h2>Horas de paro por planta</h2></div><b id="totalHours" class="pill"></b></div><div id="ranking" class="ranking"></div></article>
+    <article class="card panel"><div class="panel-head"><div><p class="eyebrow">CONTROL DE METAS</p><h2>Resultado por planta</h2></div><small>Selecciona una fila para consultar</small></div><div class="table-wrap"><table><thead><tr><th>Planta</th><th>Tiempo muerto</th><th>Meta TM</th><th>MP</th><th>Horas</th><th>Estado</th></tr></thead><tbody id="resultTable"></tbody></table></div></article>
+    <article class="card panel"><div class="panel-head"><div><p class="eyebrow">DISTRIBUCIÓN</p><h2 id="equipmentTitle"></h2></div><small id="equipmentHint"></small></div><div id="equipmentChart" class="equipment-chart"></div></article>
+  </section>
+  <footer><span>Grupo Grisi · Mantenimiento y Proyectos</span><span>Información administrada desde Captura mensual</span></footer>
+</main>
 
-    <main>
-      <header class="topbar">
-        <div>
-          <p class="eyebrow">SUBDIRECCIÓN DE MANUFACTURA</p>
-          <h1>KPIs de mantenimiento</h1>
-          <p class="subtitle" id="viewSubtitle">Visión consolidada de las plantas</p>
-        </div>
-        <div class="top-actions">
-          <label class="plant-select">
-            <span>Planta</span>
-            <select id="plantSelect" aria-label="Seleccionar planta">
-              <option value="ALL">Todas las plantas</option>
-              <option value="VALLEJO">Vallejo</option>
-              <option value="CDT">CDT</option>
-              <option value="CPA">CPA</option>
-              <option value="CPH">CPH</option>
-            </select>
-          </label>
-          <button id="exportButton" class="export-button">Descargar resumen</button>
-        </div>
-      </header>
-
-      <section class="filter-strip" aria-label="Filtros rápidos">
-        <div class="period"><span>Periodo</span><strong>Agosto 2026</strong></div>
-        <div class="plant-chips" id="plantChips"></div>
-        <div class="updated">Actualizado: 28 sep 2026</div>
-      </section>
-
-      <section class="notice" id="notice" hidden></section>
-
-      <section class="kpi-grid" aria-label="Indicadores principales">
-        <article class="kpi-card" id="tmCard">
-          <div class="kpi-heading"><span>Tiempo muerto</span><span class="status" id="tmStatus"></span></div>
-          <div class="kpi-value" id="tmValue">2.40%</div>
-          <div class="kpi-meta"><span>Meta general ≤ 1.50%</span><strong id="tmVariance">+0.90 pp</strong></div>
-          <div class="progress"><i id="tmProgress"></i></div>
-        </article>
-        <article class="kpi-card" id="mpCard">
-          <div class="kpi-heading"><span>Cumplimiento MP</span><span class="status" id="mpStatus"></span></div>
-          <div class="kpi-value" id="mpValue">98.00%</div>
-          <div class="kpi-meta"><span>Meta general ≥ 98%</span><strong id="mpVariance">En meta</strong></div>
-          <div class="progress"><i id="mpProgress"></i></div>
-        </article>
-        <article class="kpi-card">
-          <div class="kpi-heading"><span>Horas de paro</span><span class="icon-box">h</span></div>
-          <div class="kpi-value" id="hoursValue">829.45</div>
-          <div class="kpi-meta"><span id="hoursContext">Acumulado de 4 plantas</span><strong id="hoursShare">100%</strong></div>
-          <div class="mini-bars" id="miniBars" aria-hidden="true"></div>
-        </article>
-        <article class="kpi-card accent-card">
-          <div class="kpi-heading"><span>Foco de atención</span><span class="alert-dot">!</span></div>
-          <div class="focus-value" id="focusValue">CPA</div>
-          <p id="focusText">Concentra 58.4% de las horas de paro y excede la meta de tiempo muerto.</p>
-        </article>
-      </section>
-
-      <section class="dashboard-grid">
-        <article class="panel trend-panel">
-          <div class="panel-heading">
-            <div><p class="eyebrow">TENDENCIA GLOBAL</p><h2>Indicadores enero–agosto 2026</h2></div>
-            <div class="legend"><span><i class="blue"></i>Tiempo muerto</span><span><i class="green"></i>MP</span><span><i class="dashed"></i>Meta</span></div>
-          </div>
-          <div class="trend-chart" id="trendChart"></div>
-          <p class="chart-footnote">El eje izquierdo muestra tiempo muerto. El eje derecho muestra cumplimiento de mantenimiento preventivo.</p>
-        </article>
-
-        <article class="panel ranking-panel">
-          <div class="panel-heading">
-            <div><p class="eyebrow">COMPARATIVO</p><h2>Horas de paro por planta</h2></div>
-            <span class="total-pill" id="totalHours">829.45 h</span>
-          </div>
-          <div id="plantRanking" class="ranking"></div>
-        </article>
-
-        <article class="panel table-panel">
-          <div class="panel-heading">
-            <div><p class="eyebrow">CONTROL DE METAS</p><h2>Resultado por planta</h2></div>
-            <span class="hint">Seleccione una fila para consultar</span>
-          </div>
-          <div class="table-wrap">
-            <table>
-              <thead><tr><th>Planta</th><th>Tiempo muerto</th><th>Meta TM</th><th>MP</th><th>Horas</th><th>Estado</th></tr></thead>
-              <tbody id="plantTable"></tbody>
-            </table>
-          </div>
-        </article>
-
-        <article class="panel equipment-panel">
-          <div class="panel-heading">
-            <div><p class="eyebrow">DISTRIBUCIÓN</p><h2 id="equipmentTitle">Equipos con mayor tiempo muerto</h2></div>
-            <span class="hint" id="equipmentHint">Todas las plantas</span>
-          </div>
-          <div id="equipmentChart" class="equipment-chart"></div>
-        </article>
-      </section>
-
-      <footer><span>Grupo Grisi · Mantenimiento y Proyectos</span><span>Fuente: Indicadores de mantenimiento.pptx</span></footer>
-    </main>
-  </div>
-  <script src="data.js"></script>
-  <script src="app.js"></script>
-</body>
-</html>
+<dialog id="captureDialog">
+  <form method="dialog" class="capture-shell">
+    <header><div><p class="eyebrow">ADMINISTRACIÓN DE DATOS</p><h2>Captura mensual de indicadores</h2><p>Registra la información y descarga el archivo para actualizar GitHub.</p></div><button value="cancel" class="close" aria-label="Cerrar">×</button></header>
+    <div class="storage-note"><b>Guardado local:</b> los cambios permanecen en este navegador. Para publicar la actualización, descarga y reemplaza <code>data.js</code> en GitHub.</div>
+    <nav class="tabs"><button type="button" class="active" data-tab="monthly">1. Resumen mensual</button><button type="button" data-tab="plants">2. Resultados por planta</button><button type="button" data-tab="equipment">3. Tiempos por equipo</button></nav>
+    <section class="tab-panel active" id="tab-monthly">
+      <div class="form-grid"><label>Mes<select id="editMonth"></select></label><label>Año<input id="editYear" type="number" min="2024" max="2100"></label><label>Tiempo muerto global %<input id="editGlobalTm" type="number" min="0" step="0.01"></label><label>Cumplimiento MP global %<input id="editGlobalMp" type="number" min="0" max="100" step="0.01"></label></div>
+      <p class="help">El mes capturado se agrega automáticamente a la gráfica de tendencia.</p>
+    </section>
+    <section class="tab-panel" id="tab-plants"><div class="table-wrap"><table class="edit-table"><thead><tr><th>Planta</th><th>TM %</th><th>Meta TM %</th><th>MP %</th><th>Horas de paro</th></tr></thead><tbody id="plantEditTable"></tbody></table></div><p class="help">Deja MP vacío cuando el resultado se encuentre en proceso.</p></section>
+    <section class="tab-panel" id="tab-equipment">
+      <div class="equipment-toolbar"><label>Planta<select id="equipmentPlant"></select></label><button type="button" id="addEquipment" class="secondary">+ Agregar equipo</button></div>
+      <div class="table-wrap"><table class="edit-table"><thead><tr><th>Equipo o línea</th><th>Horas</th><th></th></tr></thead><tbody id="equipmentEditTable"></tbody></table></div>
+    </section>
+    <div class="capture-actions"><input id="importFile" type="file" accept=".json,.js" hidden><button type="button" id="importData" class="ghost">Importar respaldo</button><button type="button" id="exportJson" class="ghost">Descargar respaldo JSON</button><button type="button" id="resetData" class="danger-text">Restaurar datos base</button><span></span><button type="button" id="saveLocal" class="secondary">Guardar en este navegador</button><button type="button" id="downloadData">Descargar data.js</button></div>
+  </form>
+</dialog>
+<script src="data.js"></script><script src="app.js"></script>
+</body></html>
